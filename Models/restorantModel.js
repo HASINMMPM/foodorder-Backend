@@ -41,7 +41,7 @@ const restorantschema = new mongoose.Schema({
   },
 });
 const Restaurant = mongoose.model("Restaurant", restorantschema);
-const verifyRestaurant = mongoose.model("verifyRestaurant", restorantschema);
+const VerifyRestaurant = mongoose.model("VerifyRestaurant", restorantschema);
 export  {Restaurant,
-  verifyRestaurant,
+  VerifyRestaurant,
 };

@@ -1,10 +1,15 @@
-import jwt from "jsonwebtoken";
-import "dotenv/config";
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
-function generateAdminToken(role) {
-    
-  return jwt.sign({role:role}, process.env.TOKEN_SECRET, { expiresIn: '180d' });
-  
+function generateAdminToken(admin) {
+  try {
+    return jwt.sign({ id: admin._id, role: admin.role }, process.env.TOKEN_SECRET, {
+      expiresIn: "1d",
+    });
+  } catch (error) {
+    console.error("Error generating token:", error);
+    throw new Error("Token generation failed");
+  }
 }
 
-export default  generateAdminToken; 
+export default generateAdminToken;

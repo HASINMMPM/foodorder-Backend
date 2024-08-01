@@ -1,55 +1,9 @@
-import { unlink } from "node:fs";
-
+import jwt from "jsonwebtoken";
 import { cloudinaryInstance } from "../config/cloudinary.js";
 import "dotenv/config";
-import Restaurant from "../Models/restorantModel.js";
+
 import Food from "../Models/foodModel.js";
-// import Restaurant from "../Models/restorantModel.js";
-
-//  add food
-// const addFood = async (req, res) => {
-
-//   try {
-//     console.log("try to add a food");
-//     req.body.image = req.file.path
-
-//     if(!req.file) {
-//       return res.send("file is not visible")
-//       }
-//       cloudinaryInstance.uploader.upload(req.file.path , async (err,res) => {
-//         if(err) {
-//           console.log(err);
-//           return res.status(500).json({ message: "Failed to upload image", error: err });
-//         }
-//         // console.log('res is ',res);
-
-//       })
-
-//     // const { title, price, description, category,restaurant } = req.body;
-//     // const checkRestaurant = await Restaurant.find({Title :restaurant})
-//     // if(!checkRestaurant) {
-//     //   return res.status(404).json({ message: "Restaurant not found" });
-//     // }
-//     const { title, price, description, category, } = req.body;
-
-//     const food = new Food({
-//       Title: title,
-//       Price: price,
-//       Description: description,
-//       Image: res.url,
-//       Category: category,
-//       // Restaurant:checkRestaurant
-//     });
-//     const newFood = await food.save();
-//     if (!newFood) {
-//       return res.status(400).json({ message: "Failed to add food" });
-//     }
-//     res.status(201).json({ message: "Food added successfully", food });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Error", err });
-//   }
-// };
+import { Restaurant } from "../Models/restorantModel.js";
 
 const addFood = async (req, res) => {
   try {
@@ -73,13 +27,28 @@ const addFood = async (req, res) => {
         const { title, price, description, category, restaurant, ownerID } =
           req.body;
 
-        const checkRestaurant = await Restaurant.find({
+        const token = req.cookies.token;
+        let tokenOwnerID;
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.sendStatus(403);
+          }
+          tokenOwnerID = result.id;
+        });
+
+        if (ownerID !== tokenOwnerID) {
+          return res.status(403).json({ message: "Unauthorized user" });
+        }
+
+        const checkRestaurant = await Restaurant.findOne({
           Title: restaurant,
           Owner: ownerID,
         });
         if (!checkRestaurant) {
           return res.status(404).json({ message: "Restaurant not found" });
         }
+
         const food = new Food({
           Title: title,
           Price: price,

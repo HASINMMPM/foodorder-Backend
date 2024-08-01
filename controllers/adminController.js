@@ -47,9 +47,10 @@ const adminsignup = async (req, res) => {
 
 const adminlog = async (req, res) => {
   try {
+    console.log("try to admin login");
     const { phoneNumber, password } = req.body;
 
-    const admin = await Admin.findOne({ phoneNumber });
+    const admin = await Admin.findOne({ phoneNumber: phoneNumber });
     if (!admin) {
       return res.status(400).json({ msg: "admin not found" });
     }
@@ -58,8 +59,10 @@ const adminlog = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ msg: "invalid password" });
     }
+    console.log(admin);
 
-    const token = generateAdminToken(phoneNumber);
+    const token = generateAdminToken(admin);
+    console.log(token);
     res.cookie("token", token);
     res.send("Admin Login success");
   } catch (error) {

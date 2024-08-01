@@ -1,53 +1,40 @@
 // add res
 
-import { cloudinaryInstance } from "../config/cloudinary.js";
-import Restaurant from "../Models/restorantModel.js";
-import Admin from "../Models/adminModel.js";
+import { Restaurant, VerifyRestaurant } from "../Models/restorantModel.js";
 
 const addRestaurant = async (req, res) => {
+  
   try {
     console.log("try to add a Restourant");
-
-    if (!req.file) {
-      return res.status(400).json({ message: "No image provided" });
+    const checkVerifyRestaurant = await VerifyRestaurant.find({_id:req.params.id});
+    if (!checkVerifyRestaurant) {
+      return res
+        .status(400)
+        .json({ message: "No Restaurant with this data" });
     }
-    cloudinaryInstance.uploader.upload(
-      req.file.path,
-      async (err, restoresult) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send(err);
-        }
-        console.log("Image uploaded successfully");
+    console.log("checkVerifyRestaurant", checkVerifyRestaurant);
+    console.log(checkVerifyRestaurant.Title);
 
-        const { title, place, description, type, workingtime, ownerNumber } =
-          req.body;
-        const owner = await Admin.findOne({ phoneNumber: ownerNumber });
-        if (!owner) {
-          return res
-            .status(400)
-            .json({ message: "No admin found with that number" });
-        }
-        const restaurant = new Restaurant({
-          Title: title,
-          Place: place,
-          Description: description,
-          Type: type,
-          WorkingTime: workingtime,
-          Owner: owner,
-          Image: restoresult.url,
-        });
+     const restaurants = checkVerifyRestaurant.map((verifyRestaurant) => {
+      return new Restaurant({
+        Title: verifyRestaurant.Title,
+        Place: verifyRestaurant.Place,
+        Description: verifyRestaurant.Description,
+        Type: verifyRestaurant.Type,
+        WorkingTime: verifyRestaurant.WorkingTime,
+        Owner: verifyRestaurant.Owner,
+        Image: verifyRestaurant.Image,
+      });
+    });
 
-        const newRestaurant = await restaurant.save();
-        if (!newRestaurant) {
-          return res.status(400).json({ message: "Failed to add restaurant" });
-        }
-        res.status(201).send(newRestaurant);
-      }
-    );
+    const newRestaurants = await Restaurant.insertMany(restaurants);
+
+    if (!newRestaurants || newRestaurants.length === 0) {
+      return res.status(400).json({ message: "Failed to add restaurant(s)" });
+    }
+    res.status(201).send(newRestaurants);
   } catch (error) {
     console.log(error);
-    res.status(500).send(" Error", error);
   }
 };
 

@@ -19,9 +19,9 @@ const foodschema = new mongoose.Schema({
     minlength: 10,
   },
   Category: {
-    type: String,
+    type: [String],
     required: true,
-    // enum: ["Appetizers", "Main Courses", "Desserts"],
+    
   },
   Image: {
     type: String,
