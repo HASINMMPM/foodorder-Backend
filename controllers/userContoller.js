@@ -18,7 +18,7 @@ const userSignup = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
-    console.log(hashPassword)
+    console.log(hashPassword);
 
     const newUser = new User({
       phoneNumber,
@@ -48,19 +48,18 @@ const userSignup = async (req, res) => {
 
 const userLogin = async (req, res) => {
   try {
-    console.log("try to login")
+    console.log("try to login");
     const { phoneNumber, password } = req.body;
 
-    const user = await User.findOne( {phoneNumber} );
+    const user = await User.findOne({ phoneNumber });
     if (!user) {
       return res.status(400).send("User Not found");
     }
 
     const isMatch = await bcrypt.compare(password, user.hashPassword);
     if (!isMatch) {
-      console.log("password matched")
+      console.log("password matched");
       return res.status(400).json({ msg: "invalid password" });
-      
     }
 
     const token = generateAccessToken(phoneNumber);
@@ -71,8 +70,4 @@ const userLogin = async (req, res) => {
   }
 };
 
-
-
-export { userSignup ,
-  userLogin 
-};
+export { userSignup, userLogin };

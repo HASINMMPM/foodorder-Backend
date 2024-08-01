@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: Number,
     required: true,
-                       // minlength: 10,
+    minlength: 10,
     maxlength: 10,
   },
   hashPassword: {
@@ -24,6 +24,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
   },
+  food: { type: mongoose.Types.ObjectId, ref: "Food" },
 });
 export const User = mongoose.model("User", userSchema);
-

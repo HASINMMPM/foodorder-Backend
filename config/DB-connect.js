@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 
 import "dotenv/config";
-// const string = process.env.Db-string
-// console.log(string)
 
 const connect = async () => {
   try {

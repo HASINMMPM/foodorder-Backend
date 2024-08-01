@@ -1,18 +1,17 @@
 import mongoose from "mongoose";
 
-const adminschema = new mongoose.Schema({
-  fullName: {
+const superadminSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
     minlength: 2,
     maxlength: 20,
   },
-  phoneNumber: {
-    type: Number,
+  email: {
+    type: String,
     required: true,
-    minlength: 1,
-    unique: true,
-    // maxlength: 10,
+    minlength: 3,
+    maxlength: 20,
   },
   hashPassword: {
     type: String,
@@ -21,8 +20,9 @@ const adminschema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["Admin"],
+    enum: ["Super admin"],
   },
 });
-const Admin = mongoose.model("Admin", adminschema);
-export default Admin;
+const SuperAdmin = mongoose.model("SuperAdmin", superadminSchema);
+
+export default SuperAdmin;
