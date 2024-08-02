@@ -5,6 +5,75 @@ import "dotenv/config";
 import Food from "../Models/foodModel.js";
 import { Restaurant } from "../Models/restorantModel.js";
 
+// const addFood = async (req, res) => {
+//   try {
+//     console.log("try to add a food");
+
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No image provided" });
+//     }
+
+//     cloudinaryInstance.uploader.upload(
+//       req.file.path,
+//       async (err, foodCloudResult) => {
+//         if (err) {
+//           console.log(err);
+//           return res
+//             .status(500)
+//             .json({ message: "Failed to upload image", error: err });
+//         }
+//         // console.log(foodCloudResult);
+
+//         const { title, price, description, category, restaurant, ownerID } =
+//           req.body;
+
+//         const token = req.cookies.token;
+//         let tokenOwnerID;
+//         jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
+//           if (err) {
+//             console.log(err);
+//             return res.sendStatus(403);
+//           }
+//           tokenOwnerID = result.id;
+//         });
+
+//         if (ownerID !== tokenOwnerID) {
+//           return res.status(403).json({ message: "Unauthorized user" });
+//         }
+
+//         const checkRestaurant = await Restaurant.findOne({
+//           Title: restaurant,
+//           Owner: ownerID,
+//         });
+//         if (!checkRestaurant) {
+//           return res.status(404).json({ message: "Restaurant not found" });
+//         }
+
+//         const food = new Food({
+//           Title: title,
+//           Price: price,
+//           Description: description,
+//           Image: foodCloudResult.url,
+//           Category: category,
+//           Restaurant: checkRestaurant,
+//         });
+
+//         const newFood = await food.save();
+
+//         if (!newFood) {
+//           return res.status(400).json({ message: "Failed to add food" });
+//         }
+
+//         res
+//           .status(201)
+//           .json({ message: "Food added successfully", food: newFood });
+//       }
+//     );
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "ERROR IS", error: err });
+//   }
+// };
 const addFood = async (req, res) => {
   try {
     console.log("try to add a food");
@@ -24,9 +93,9 @@ const addFood = async (req, res) => {
         }
         // console.log(foodCloudResult);
 
-        const { title, price, description, category, restaurant, ownerID } =
+        const { title, price, description, category, restaurant, image } =
           req.body;
-
+        console.log("req.body",req.body)
         const token = req.cookies.token;
         let tokenOwnerID;
         jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
@@ -37,23 +106,26 @@ const addFood = async (req, res) => {
           tokenOwnerID = result.id;
         });
 
-        if (ownerID !== tokenOwnerID) {
-          return res.status(403).json({ message: "Unauthorized user" });
-        }
-
         const checkRestaurant = await Restaurant.findOne({
           Title: restaurant,
-          Owner: ownerID,
         });
         if (!checkRestaurant) {
           return res.status(404).json({ message: "Restaurant not found" });
+        }
+        console.log("checkRestaurant", checkRestaurant);
+        const ownerID = checkRestaurant.Owner;
+
+        console.log(ownerID);
+        console.log(tokenOwnerID);
+        if (ownerID != tokenOwnerID) {
+          return res.status(403).json({ message: "Unauthorized user" });
         }
 
         const food = new Food({
           Title: title,
           Price: price,
           Description: description,
-          Image: foodCloudResult.url,
+          Image: foodCloudResult.url || image,
           Category: category,
           Restaurant: checkRestaurant,
         });

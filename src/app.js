@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(cookieParser());
 
 app.use("/",v1Router)
-app.use("/img",express.static('uploaded_images'))
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
