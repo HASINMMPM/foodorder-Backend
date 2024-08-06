@@ -28,14 +28,14 @@ const userSignup = async (req, res) => {
     });
 
     // new user save
-    const newUserCreation = await newUser.save();
+    const user = await newUser.save();
 
     // if failed
-    if (!newUserCreation) {
+    if (!user) {
       return res.status(400).json({ msg: "user not created" });
     }
 
-    const token = generateAccessToken(phoneNumber);
+    const token = generateAccessToken(user);
     console.log(token);
     res.cookie("token", token);
     res.send("welcome and enjoy");
@@ -43,6 +43,7 @@ const userSignup = async (req, res) => {
     console.log(error);
   }
 };
+
 
 // login
 
@@ -61,10 +62,10 @@ const userLogin = async (req, res) => {
       console.log("password matched");
       return res.status(400).json({ msg: "invalid password" });
     }
-
-    const token = generateAccessToken(phoneNumber);
+    console.log(user)
+    const token = generateAccessToken(user);
     res.cookie("token", token);
-    res.send("UserLogin success");
+    res.send("UserLogin success",);
   } catch (error) {
     console.log(error);
   }

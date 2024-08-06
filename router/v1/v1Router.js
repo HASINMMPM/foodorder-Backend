@@ -7,6 +7,7 @@ import {
   restaurantRouter,
   verifyRestaurantRouter,
 } from "../routers/restaurantRouter.js";
+import { orderRouter } from "../routers/orderRouter.js";
 
 const v1Router = express.Router();
 
@@ -16,5 +17,6 @@ v1Router.use("/v1/admin", adminRouter);
 v1Router.use("/v1", superAdminRouter);
 v1Router.use("/v1/restuarant", restaurantRouter);
 v1Router.use("/v1/verify", verifyRestaurantRouter);
+v1Router.use("/v1", orderRouter);
 
 export { v1Router };
