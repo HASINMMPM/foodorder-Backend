@@ -6,7 +6,7 @@ import razorpayInstance from "../config/razorPay.js";
 
 const addOrder = async (req, res) => {
   try {
-    const { orderItems, shippingAddress1, place, city, zip, country, phone } =
+    const { orderItems, shippingAddress1, place, city, zip, country, phone ,reciever} =
       req.body;
 
     // Check if order items exist
@@ -72,6 +72,7 @@ const addOrder = async (req, res) => {
       zip,
       country,
       phone,
+      reciever,
       totalPrice: totalPrice,
       user: userID,
       razorpayOrderId: razorpayOrder.id,

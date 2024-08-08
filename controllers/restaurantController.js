@@ -1,41 +1,61 @@
+import Admin from "../Models/adminModel.js";
 import { Restaurant, VerifyRestaurant } from "../Models/restorantModel.js";
 
 // add res
 
 const addRestaurant = async (req, res) => {
   try {
-    console.log("try to add a Restourant");
-    const checkVerifyRestaurant = await VerifyRestaurant.find({
-      _id: req.params.id,
-    });
+    console.log("Trying to add a Restaurant");
+    const checkVerifyRestaurant = await VerifyRestaurant.findById(req.params.id);
+    console.log("checkVerifyRestaurant", checkVerifyRestaurant);
+
     if (!checkVerifyRestaurant) {
       return res.status(400).json({ message: "No Restaurant with this data" });
     }
-    console.log("checkVerifyRestaurant", checkVerifyRestaurant);
-    console.log(checkVerifyRestaurant.Title);
 
-    const restaurants = checkVerifyRestaurant.map((verifyRestaurant) => {
-      return new Restaurant({
-        Title: verifyRestaurant.Title,
-        Place: verifyRestaurant.Place,
-        Description: verifyRestaurant.Description,
-        Type: verifyRestaurant.Type,
-        WorkingTime: verifyRestaurant.WorkingTime,
-        Owner: verifyRestaurant.Owner,
-        Image: verifyRestaurant.Image,
-      });
+    const newRestaurant = new Restaurant({
+      Title: checkVerifyRestaurant.Title,
+      Place: checkVerifyRestaurant.Place,
+      Description: checkVerifyRestaurant.Description,
+      Type: checkVerifyRestaurant.Type,
+      WorkingTime: checkVerifyRestaurant.WorkingTime,
+      Owner: checkVerifyRestaurant.Owner,
+      Image: checkVerifyRestaurant.Image,
     });
+    console.log("newRestaurant", newRestaurant);
 
-    const newRestaurants = await Restaurant.insertMany(restaurants);
+    const savedRestaurant = await newRestaurant.save();
 
-    if (!newRestaurants || newRestaurants.length === 0) {
-      return res.status(400).json({ message: "Failed to add restaurant(s)" });
+    if (!savedRestaurant) {
+      return res.status(400).json({ message: "Failed to add restaurant" });
     }
-    res.status(201).send(newRestaurants);
+    // Delete verify restaurant entry
+
+    const id = req.params.id;
+    await VerifyRestaurant.findByIdAndDelete(id);
+
+
+    // Update admin with the new restaurant
+
+    const admin_id = savedRestaurant.Owner;
+    console.log("admin", admin_id);
+    console.log("newRestaurant title", savedRestaurant.Title);
+
+    const upadmin = await Admin.findByIdAndUpdate(admin_id, {
+      restaurant: savedRestaurant._id, 
+    });
+    console.log("upadmin",upadmin)
+
+    res.status(201).json({
+      message: "Restaurant added successfully and linked to admin",
+      restaurant: savedRestaurant,
+    });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
   }
 };
+
 
 // get all Restaurant
 

@@ -124,7 +124,7 @@ const updateFood = async (req, res) => {
         title: title,
         price: price,
         description: description,
-        category: category,
+        categories: category,
       },
       { new: true }
     );
@@ -143,25 +143,18 @@ const updateFood = async (req, res) => {
 //  delete food
 
 const deleteFood = async (req, res) => {
-  const id = req.params.id;
   try {
-    const checkFood = await Food.findById(id);
-
-    if (!checkFood) {
+    const id = req.params.id;
+    const deletedFood = await Food.findByIdAndDelete(id);
+    if (!deletedFood) {
       return res.status(404).json({ message: "Food not found" });
-    } else {
-      console.log(checkFood);
     }
-    const foodToDelete = await Food.findByIdAndDelete(id);
-    if (!foodToDelete) {
-      return res.status(404).json({ message: "Food not Deleted" });
-    }
-    await unlink(`uploaded_images/${checkFood.Image}`, () => {});
-    res.send({ message: "Food deleted successfully" });
+    res.send(deletedFood);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Error", err });
+    res.status(500).json({ message: "Error", error: err.message });
   }
+
 };
 
 export { addFood, getAllFood, getFoodById, updateFood, deleteFood };

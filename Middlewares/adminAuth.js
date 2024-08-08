@@ -5,7 +5,7 @@ dotenv.config();
 
 function authenticateAdmin(req, res, next) {
   const token = req.cookies.token;
-  console.log(token);
+  // console.log(token);
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
     if (err) {
@@ -24,7 +24,7 @@ function authenticateAdmin(req, res, next) {
 
 function authenticateSuperAdmin(req, res, next) {
   const token = req.cookies.token;
-  console.log(token);
+  // console.log(token);
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
     if (err) {
@@ -43,7 +43,7 @@ function authenticateSuperAdmin(req, res, next) {
 
 function adminsValidation(req, res, next) {
   const token = req.cookies.token;
-  console.log(token);
+  // console.log(token);
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
     if (err) {
