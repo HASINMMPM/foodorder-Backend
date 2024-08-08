@@ -33,7 +33,7 @@ function authenticateSuperAdmin(req, res, next) {
     }
     console.log("jwt result", result);
 
-    if (result.role === "Admin") {
+    if (result.role === "Super admin") {
       next();
     } else {
       return res.send("You cant access this rout");

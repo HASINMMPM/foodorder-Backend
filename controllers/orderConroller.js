@@ -2,6 +2,7 @@ import OrderItem from "../Models/orderItemsModel.js";
 import Order from "../Models/orderModel.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import razorpayInstance from "../config/razorPay.js";
 
 const addOrder = async (req, res) => {
   try {
@@ -54,6 +55,14 @@ const addOrder = async (req, res) => {
       userID = result.id;
     });
 
+    const options = {
+      amount: totalPrice * 100, // Amount in paise
+      currency: "INR",
+      receipt: `${userID}_receipt_order_${Date.now()}`,
+    };
+
+    const razorpayOrder = await razorpayInstance.orders.create(options);
+
     // Create the order
     const order = new Order({
       orderItems: orderItemsIds,
@@ -65,6 +74,7 @@ const addOrder = async (req, res) => {
       phone,
       totalPrice: totalPrice,
       user: userID,
+      razorpayOrderId: razorpayOrder.id,
     });
 
     const newOrder = await order.save();
@@ -78,6 +88,32 @@ const addOrder = async (req, res) => {
       .json({ message: "Order created successfully", order: newOrder });
   } catch (err) {
     res.status(500).json({ message: "An error occurred", error: err.message });
+  }
+};
+
+// Verify
+const verifyPayment = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest('hex');
+
+    if (digest === razorpay_signature) {
+      // Payment is verified, update the order status
+      const order = await Order.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        { status: 'Paid' },
+        { new: true }
+      );
+
+      res.json({ message: 'Payment verified successfully', order });
+    } else {
+      res.status(400).json({ message: 'Payment verification failed' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'An error occurred', error: error.message });
   }
 };
 
@@ -141,4 +177,4 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-export { addOrder, getAllOrders, updateOrder, deleteOrder };
+export { addOrder, getAllOrders, updateOrder, deleteOrder,verifyPayment };

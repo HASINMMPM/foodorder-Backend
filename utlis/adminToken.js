@@ -4,7 +4,7 @@ import 'dotenv/config';
 function generateAdminToken(admin) {
   try {
     return jwt.sign({ id: admin._id, role: admin.role }, process.env.TOKEN_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "100d",
     });
   } catch (error) {
     console.error("Error generating token:", error);

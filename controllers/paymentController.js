@@ -1,31 +1,24 @@
 import razorpay from "razorpay";
 import crypto from "crypto";
+import razorpayInstance from "../config/razorPay";
 
 const createPayment = async (req, res) => {
-  // initializing razorpay
-  const razorpay = new Razorpay({
-    key_id: req.body.keyId,
-    key_secret: req.body.keySecret,
-  });
-
-  // setting up options for razorpay order.
-  const options = {
-    amount: req.body.amount,
-    currency: req.body.currency,
-    receipt: "any unique id for every order",
-    payment_capture: 1,
-  };
   try {
-    const response = await razorpay.orders.create(options);
-    res.json({
-      order_id: response.id,
-      currency: response.currency,
-      amount: response.amount,
-    });
-  } catch (err) {
-    res.status(400).send("Not able to create order. Please try again!", err);
+    const { amount, currency, receipt } = req.body;
+
+    const options = {
+      amount: amount * 100, // Amount in the smallest currency unit (e.g., paise for INR)
+      currency,
+      receipt,
+      payment_capture: 1, // Auto capture
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+    res.json(order);
+  } catch (error) {
+    res.status(500).send(error);
   }
-};
+}
 
 const paymentCapture = (req, res) => {
   const secret_key = process.env.CRYPTO_SEC;

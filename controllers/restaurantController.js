@@ -1,21 +1,20 @@
-// add res
-
 import { Restaurant, VerifyRestaurant } from "../Models/restorantModel.js";
 
+// add res
+
 const addRestaurant = async (req, res) => {
-  
   try {
     console.log("try to add a Restourant");
-    const checkVerifyRestaurant = await VerifyRestaurant.find({_id:req.params.id});
+    const checkVerifyRestaurant = await VerifyRestaurant.find({
+      _id: req.params.id,
+    });
     if (!checkVerifyRestaurant) {
-      return res
-        .status(400)
-        .json({ message: "No Restaurant with this data" });
+      return res.status(400).json({ message: "No Restaurant with this data" });
     }
     console.log("checkVerifyRestaurant", checkVerifyRestaurant);
     console.log(checkVerifyRestaurant.Title);
 
-     const restaurants = checkVerifyRestaurant.map((verifyRestaurant) => {
+    const restaurants = checkVerifyRestaurant.map((verifyRestaurant) => {
       return new Restaurant({
         Title: verifyRestaurant.Title,
         Place: verifyRestaurant.Place,

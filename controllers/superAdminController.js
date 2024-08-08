@@ -5,7 +5,7 @@ import SuperAdmin from "../Models/superAdmin.js";
 const superAdminsignup = async (req, res) => {
   console.log("super signup");
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role} = req.body;
     console.log(email);
 
     const superAdminexist = await SuperAdmin.findOne({ email });
@@ -26,16 +26,17 @@ const superAdminsignup = async (req, res) => {
       role: "Super admin",
     });
 
-    const newAdminCreation = await newAdmin.save();
+    const newSuperAdminCreation = await newAdmin.save();
 
-    if (!newAdminCreation) {
+    if (!newSuperAdminCreation) {
       return res.status(400).json({ msg: "super admin not created" });
     }
-
-    const token = generateAdminToken(role);
+    const admin =newSuperAdminCreation
+    const token = generateAdminToken(admin);
     console.log(token);
-    res.send("you can controll it ");
     res.cookie("token", token);
+    res.send("super Admin created and you can controll it ");
+    
   } catch (error) {
     console.log(error);
   }
@@ -47,7 +48,7 @@ const superAdminlog = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ email });
+    const admin = await SuperAdmin.findOne({ email });
     if (!admin) {
       return res.status(400).json({ msg: " super admin not found" });
     }
@@ -57,9 +58,9 @@ const superAdminlog = async (req, res) => {
       return res.status(400).json({ msg: "invalid password" });
     }
 
-    const token = generateAdminToken(role);
+    const token = generateAdminToken(admin);
     res.cookie("token", token);
-    res.send("you can controll it");
+    res.send("super Admin logined you can controll it");
   } catch (error) {
     console.log(error);
   }

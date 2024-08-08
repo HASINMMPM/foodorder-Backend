@@ -5,11 +5,13 @@ import cookieParser from 'cookie-parser'
 import { v1Router } from '../router/v1/v1Router.js'
 const app = express()
 const port = 3000
+import cors from "cors"
 
 // middleware
 
 app.use(express.json())
 app.use(cookieParser());
+app.use(cors())
 
 app.use("/",v1Router)
 

@@ -33,10 +33,11 @@ const adminsignup = async (req, res) => {
     if (!newAdminCreation) {
       return res.status(400).json({ msg: "admin not created" });
     }
+    const admin = newAdminCreation
 
-    const token = generateAdminToken(role);
+    const token = generateAdminToken(admin);
     console.log(token);
-    res.send("you can add foods ");
+    res.send(admin);
     res.cookie("token", token);
   } catch (error) {
     console.log(error);
@@ -69,6 +70,7 @@ const adminlog = async (req, res) => {
     console.log(error);
   }
 };
+
 
 // get all admin
 
