@@ -1,8 +1,9 @@
-import OrderItem from "../Models/orderItemsModel.js";
+// import OrderItem from "../Models/orderItemsModel.js";
 import Order from "../Models/orderModel.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import razorpayInstance from "../config/razorPay.js";
+import {User} from "../Models/userModel.js"
 
 const addOrder = async (req, res) => {
   try {
@@ -177,5 +178,15 @@ const deleteOrder = async (req, res) => {
       .json({ message: "An error occurred", error: error.message });
   }
 };
+
+// const addOrder =async (req,res) =>{
+//     try {
+        
+        
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({ message: "An error occurred", error: error.message });
+//     }
+// }
 
 export { addOrder, getAllOrders, updateOrder, deleteOrder,verifyPayment };

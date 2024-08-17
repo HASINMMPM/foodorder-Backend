@@ -79,15 +79,18 @@ const getAllRestaurants = async (req, res) => {
 
 const getRestaurantById = async (req, res) => {
   try {
-    console.log("try to get a Restaurant");
-    const restaurant = await Restaurant.findById(req.params.id);
+    
+    console.log("try to get single Restaurant");
+    const id = req.params.id;
+    console.log("id",id)
+    const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
     res.send(restaurant);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error", error);
+    // res.send("Error", error);
   }
 };
 
@@ -106,9 +109,44 @@ const deleteRestaurant = async (req, res) => {
     res.status(500).send("Error", error);
   }
 };
+
+//add best reastaurant
+
+const addBestRestaurant = async (req, res) => {
+  try {
+    console.log("Try to add a Best Restaurant");
+    const { id } = req.params;
+    console.log("id", id);
+
+    // Find the restaurant by ID to get the current value of BestRestaurant
+    const restaurant = await Restaurant.findById(id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // Toggle the BestRestaurant field
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      id,
+      {
+        BestRestaurant: !restaurant.BestRestaurant,
+      },
+      { new: true }
+    );
+
+    res.send(updatedRestaurant);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error", error);
+  }
+};
+
+
+
 export {
   addRestaurant,
   getAllRestaurants,
   deleteRestaurant,
   getRestaurantById,
+  addBestRestaurant,
 };

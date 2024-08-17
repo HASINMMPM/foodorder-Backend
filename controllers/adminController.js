@@ -96,7 +96,7 @@ const deleteAdmin = async (req, res) => {
     if (!deleteadmin) {
       return res.status(404).json({ msg: "Failed to delete" });
     }
-    res.json({ msg: "admin deleted" });
+    res.json({ msg: "admin deleted successfully" });
   } catch (error) {
     console.log(error);
   }

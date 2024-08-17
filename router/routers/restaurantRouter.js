@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addBestRestaurant,
   addRestaurant,
   deleteRestaurant,
   getAllRestaurants,
@@ -26,10 +27,10 @@ restaurantRouter.post(
   authenticateSuperAdmin,
   addRestaurant
 );
-// restaurantRouter.put("/editfood/:id",updateFood)
+restaurantRouter.put("/addbestrestaurent/:id", addBestRestaurant);
 restaurantRouter.delete(
   "/deletrestauran/:id",
-  adminsValidation,
+  
   deleteRestaurant
 );
 

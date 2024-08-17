@@ -39,7 +39,12 @@ const restorantschema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  BestRestaurant:{
+    type: Boolean,
+    default: false,
+  }
 });
+
 const Restaurant = mongoose.model("Restaurant", restorantschema);
 const VerifyRestaurant = mongoose.model("VerifyRestaurant", restorantschema);
 export  {Restaurant,

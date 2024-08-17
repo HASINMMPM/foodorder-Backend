@@ -65,7 +65,7 @@ const userLogin = async (req, res) => {
     console.log(user)
     const token = generateAccessToken(user);
     res.cookie("token", token);
-    res.send("UserLogin success",);
+    res.send(user);
   } catch (error) {
     console.log(error);
   }

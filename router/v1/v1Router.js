@@ -9,6 +9,7 @@ import {
 } from "../routers/restaurantRouter.js";
 import { orderRouter } from "../routers/orderRouter.js";
 import { categoryRouter } from "../routers/categoryRouter.js";
+import { cartRouter } from "../routers/cartRouter.js";
 
 const v1Router = express.Router();
 
@@ -20,5 +21,6 @@ v1Router.use("/v1/restuarant", restaurantRouter);
 v1Router.use("/v1/verify", verifyRestaurantRouter);
 v1Router.use("/v1", orderRouter);
 v1Router.use("/v1/category", categoryRouter);
+v1Router.use("/v1/cart",cartRouter)
 
 export { v1Router };
