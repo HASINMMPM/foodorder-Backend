@@ -28,6 +28,11 @@ const foodSchema = new mongoose.Schema({
     ref: "Restaurant",
     required: true,
   },
+  isPopular:{
+    type: Boolean,
+    default: false,
+
+  }
 });
 
 const Food = mongoose.model("Food", foodSchema);

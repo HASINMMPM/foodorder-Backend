@@ -12,10 +12,10 @@ import {
 } from "../../controllers/verifyRestorantController.js";
 import upload from "../../Middlewares/multer.js";
 // import authenticateUser from '../../Middlewares/userAuth.js';
-import {
-  adminsValidation,
-  authenticateSuperAdmin,
-} from "../../Middlewares/adminAuth.js";
+// import {
+//   // adminsValidation,
+//   authenticateSuperAdmin,
+// } from "../../Middlewares/adminAuth.js";
 
 const restaurantRouter = express.Router();
 const verifyRestaurantRouter = express.Router();
@@ -24,7 +24,7 @@ restaurantRouter.get("/allrestaurant", getAllRestaurants);
 restaurantRouter.get("/restuarant/:id", getRestaurantById);
 restaurantRouter.post(
   "/addrestuarant/:id",
-  authenticateSuperAdmin,
+  // authenticateSuperAdmin,
   addRestaurant
 );
 restaurantRouter.put("/addbestrestaurent/:id", addBestRestaurant);
@@ -37,12 +37,12 @@ restaurantRouter.delete(
 verifyRestaurantRouter.post(
   "/verifyrestaurant",
   upload.single("image"),
-  adminsValidation,
+  // adminsValidation,
   addVerifyRestaurant
 );
 verifyRestaurantRouter.get(
   "/verifyrestaurant/all",
-  adminsValidation,
+  // adminsValidation,
   getAllVerifyRestaurants
 );
 

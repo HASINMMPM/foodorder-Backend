@@ -1,13 +1,11 @@
 import Admin from "../Models/adminModel.js";
 import { Restaurant, VerifyRestaurant } from "../Models/restorantModel.js";
 
-// add res
-
+// Add Restaurant
 const addRestaurant = async (req, res) => {
   try {
     console.log("Trying to add a Restaurant");
     const checkVerifyRestaurant = await VerifyRestaurant.findById(req.params.id);
-    console.log("checkVerifyRestaurant", checkVerifyRestaurant);
 
     if (!checkVerifyRestaurant) {
       return res.status(400).json({ message: "No Restaurant with this data" });
@@ -22,29 +20,20 @@ const addRestaurant = async (req, res) => {
       Owner: checkVerifyRestaurant.Owner,
       Image: checkVerifyRestaurant.Image,
     });
-    console.log("newRestaurant", newRestaurant);
 
     const savedRestaurant = await newRestaurant.save();
-
     if (!savedRestaurant) {
       return res.status(400).json({ message: "Failed to add restaurant" });
     }
+
     // Delete verify restaurant entry
-
-    const id = req.params.id;
-    await VerifyRestaurant.findByIdAndDelete(id);
-
+    await VerifyRestaurant.findByIdAndDelete(req.params.id);
 
     // Update admin with the new restaurant
-
     const admin_id = savedRestaurant.Owner;
-    console.log("admin", admin_id);
-    console.log("newRestaurant title", savedRestaurant.Title);
-
     const upadmin = await Admin.findByIdAndUpdate(admin_id, {
-      restaurant: savedRestaurant._id, 
+      $push: { restaurant: savedRestaurant._id } // Assuming restaurant is an array
     });
-    console.log("upadmin",upadmin)
 
     res.status(201).json({
       message: "Restaurant added successfully and linked to admin",
@@ -56,92 +45,70 @@ const addRestaurant = async (req, res) => {
   }
 };
 
-
-// get all Restaurant
-
+// Get all Restaurants
 const getAllRestaurants = async (req, res) => {
+  console.log("try to all res")
   try {
-    console.log("try to get all Restaurants");
     const restaurants = await Restaurant.find();
-    if (restaurants.length == 0) {
-      return res
-        .status(201)
-        .json({ message: "Not enough restaurants available" });
+    if (restaurants.length === 0) {
+      return res.status(404).json({ message: "Not enough restaurants available" });
     }
-    res.send(restaurants);
+  
+    res.status(200).json(restaurants);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error", error);
+    res.status(500).json({ message: "Error fetching restaurants", error: error.message });
   }
 };
 
-// get one restaurant
-
+// Get one Restaurant by ID
 const getRestaurantById = async (req, res) => {
   try {
-    
-    console.log("try to get single Restaurant");
-    const id = req.params.id;
-    console.log("id",id)
-    const restaurant = await Restaurant.findById(id);
+    const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-    res.send(restaurant);
+    res.status(200).json(restaurant);
   } catch (error) {
     console.log(error);
-    // res.send("Error", error);
+    res.status(500).json({ message: "Error fetching restaurant", error: error.message });
   }
 };
 
-// delete restaurants
-
+// Delete Restaurant
 const deleteRestaurant = async (req, res) => {
   try {
-    console.log("try to delete a Restaurant");
     const restaurant = await Restaurant.findByIdAndDelete(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-    res.send(restaurant);
+    res.status(200).json({ message: "Restaurant deleted successfully", restaurant });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error", error);
+    res.status(500).json({ message: "Error deleting restaurant", error: error.message });
   }
 };
 
-//add best reastaurant
-
+// Add/Remove Best Restaurant
 const addBestRestaurant = async (req, res) => {
   try {
-    console.log("Try to add a Best Restaurant");
-    const { id } = req.params;
-    console.log("id", id);
-
-    // Find the restaurant by ID to get the current value of BestRestaurant
-    const restaurant = await Restaurant.findById(id);
-
+    const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // Toggle the BestRestaurant field
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
-      id,
-      {
-        BestRestaurant: !restaurant.BestRestaurant,
-      },
+      req.params.id,
+      { BestRestaurant: !restaurant.BestRestaurant },
       { new: true }
     );
 
-    res.send(updatedRestaurant);
+    res.status(200).json(updatedRestaurant);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error", error);
+    res.status(500).json({ message: "Error updating Best Restaurant", error: error.message });
   }
 };
-
-
 
 export {
   addRestaurant,

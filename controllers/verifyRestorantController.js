@@ -51,6 +51,7 @@ const addVerifyRestaurant = async (req, res) => {
 // all restsurent
 
 const getAllVerifyRestaurants = async (req, res) => {
+  console.log("try to get verify res")
   try {
     const verifyRestaurants = await VerifyRestaurant.find();
     res.send(verifyRestaurants);

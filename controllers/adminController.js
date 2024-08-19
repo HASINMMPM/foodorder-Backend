@@ -101,5 +101,19 @@ const deleteAdmin = async (req, res) => {
     console.log(error);
   }
 };
+// get admin
 
-export { adminsignup, adminlog, getAdmins, deleteAdmin };
+const getAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findById(id);
+    if (!admin) {
+      return res.status(404).json({ msg: "Admin not found" });
+    }
+    res.json(admin);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { adminsignup, adminlog, getAdmins, deleteAdmin,getAdmin };
