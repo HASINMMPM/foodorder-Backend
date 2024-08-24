@@ -36,7 +36,7 @@ function authenticateSuperAdmin(req, res, next) {
     if (result.role === "Super admin") {
       next();
     } else {
-      return res.send("You cant access this rout");
+      return res.send("You cant access this Page");
     }
   });
 }

@@ -5,53 +5,50 @@ import Admin from "../Models/adminModel.js";
 const adminsignup = async (req, res) => {
   console.log("try adminsignup");
   try {
-    const { fullName, phoneNumber, password, role } = req.body;
-    console.log(phoneNumber);
+    const { fullName, email, password } = req.body;
+    console.log(email);
 
-    const adminexist = await Admin.findOne({ phoneNumber: phoneNumber });
+    const adminexist = await Admin.findOne({ email: email });
     if (adminexist) {
-      return res
-        .status(400)
-        .json({ msg: "admin already exist with this number" });
+      return res.status(400).json({ msg: "Admin already exists with this email" });
     }
 
     const saltRounds = 10;
-
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
     console.log(hashPassword);
 
     const newAdmin = new Admin({
-      phoneNumber,
+      email,
       fullName,
       hashPassword,
       role: "Admin",
     });
-
     const newAdminCreation = await newAdmin.save();
 
     if (!newAdminCreation) {
-      return res.status(400).json({ msg: "admin not created" });
+      return res.status(400).json({ msg: "Admin not created" });
     }
-    const admin = newAdminCreation
 
-    const token = generateAdminToken(admin);
+    const token = generateAdminToken(newAdminCreation);
     console.log(token);
-    res.send(admin);
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true }); // Set httpOnly flag
+    res.json({ token });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: "Server error" });
   }
 };
+
 
 // login
 
 const adminlog = async (req, res) => {
   try {
     console.log("try to admin login");
-    const { phoneNumber, password } = req.body;
+    const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ phoneNumber: phoneNumber });
+    const admin = await Admin.findOne({ email: email });
     if (!admin) {
       return res.status(400).json({ msg: "admin not found" });
     }
@@ -65,6 +62,7 @@ const adminlog = async (req, res) => {
     const token = generateAdminToken(admin);
     console.log(token);
     res.cookie("token", token);
+    res.json({ token });
     res.send("Admin Login success");
   } catch (error) {
     console.log(error);
@@ -116,4 +114,19 @@ const getAdmin = async (req, res) => {
   }
 };
 
-export { adminsignup, adminlog, getAdmins, deleteAdmin,getAdmin };
+// delete all admin
+
+const deleteAllAdmins = async (req, res) => {
+  try {
+    const deleteAll = await Admin.deleteMany({});
+    if (!deleteAll) {
+      return res.status(404).json({ msg: "Failed to delete all" });
+    }
+    res.json({ msg: "All admins deleted successfully" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export { adminsignup, adminlog, getAdmins, deleteAdmin,getAdmin,deleteAllAdmins };

@@ -60,6 +60,7 @@ const superAdminlog = async (req, res) => {
 
     const token = generateAdminToken(admin);
     res.cookie("token", token);
+    res.json({token})
     res.send("super Admin logined you can controll it");
   } catch (error) {
     console.log(error);

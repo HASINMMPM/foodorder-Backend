@@ -8,12 +8,11 @@ const adminschema = new mongoose.Schema(
       minlength: 2,
       maxlength: 20,
     },
-    phoneNumber: {
-      type: Number,
+    email: {
+      type: String,
       required: true,
       minlength: 1,
       unique: true,
-      // maxlength: 10,
     },
     hashPassword: {
       type: String,
