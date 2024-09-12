@@ -1,5 +1,5 @@
 import express from "express";
-import authenticateUser from "../../Middlewares/userAuth.js";
+// import authenticateUser from "../../Middlewares/userAuth.js";
 import {
   additemToCart,
   getCartItems,
@@ -8,8 +8,14 @@ import {
 
 const cartRouter = express.Router();
 
-cartRouter.post("/add/:id", authenticateUser, additemToCart);
-cartRouter.delete("/remove/:id", authenticateUser, removeFromCart);
-cartRouter.get("/getall/:id", authenticateUser, getCartItems);
+cartRouter.post("/add/:id", 
+  // authenticateUser, 
+  additemToCart);
+cartRouter.delete("/remove/:id", 
+  // authenticateUser,
+   removeFromCart);
+cartRouter.get("/get/:id", 
+  // authenticateUser,
+   getCartItems);
 
 export { cartRouter };

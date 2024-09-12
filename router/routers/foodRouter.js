@@ -17,9 +17,7 @@ foodRouter.get("/allfood", getAllFood);
 foodRouter.get("/food/:id",
   //  authenticateUser, 
    getFoodById);
-foodRouter.post("/addfood", upload.single("image"),
-//  adminsValidation,
-  addFood);
+foodRouter.post("/addfood", upload.single("image"),addFood);
 foodRouter.put("/editfood/:id",
   //  adminsValidation,
     updateFood);

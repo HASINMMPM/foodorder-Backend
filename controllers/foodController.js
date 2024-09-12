@@ -9,78 +9,82 @@ const addFood = async (req, res) => {
   try {
     console.log("Trying to add a food");
 
+    // Check for the image in the request
     if (!req.file) {
       return res.status(400).json({ message: "No image provided" });
     }
 
-    cloudinaryInstance.uploader.upload(
-      req.file.path,
-      async (err, foodCloudResult) => {
-        if (err) {
-          console.log(err);
-          return res
-            .status(500)
-            .json({ message: "Failed to upload image", error: err });
-        }
-
-        const { title, price, description, category, restaurant } = req.body;
-        console.log("req.body", req.body);
-
-        const token = req.cookies.token;
-        let tokenOwnerID;
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
-          if (err) {
-            console.log(err);
-            return res.sendStatus(403);
-          }
-          tokenOwnerID = result.id;
-        });
-
-        const checkRestaurant = await Restaurant.findOne({ Title: restaurant });
-        if (!checkRestaurant) {
-          return res.status(404).json({ message: "Restaurant not found" });
-        }
-        console.log("checkRestaurant", checkRestaurant);
-
-        const ownerID = checkRestaurant.Owner.toString(); // Convert to string for comparison
-
-        console.log("OwnerID", ownerID);
-        console.log("TokenOwnerID", tokenOwnerID);
-        if (ownerID !== tokenOwnerID) {
-          return res.status(403).json({ message: "Unauthorized user" });
-        }
-
-        const categoryNames = category.split(",");
-        const checkCategory = await Category.find({
-          name: { $in: categoryNames },
-        });
-        console.log("checkCategory", checkCategory);
-        if (checkCategory.length !== categoryNames.length) {
-          return res
-            .status(404)
-            .json({ message: "One or more categories not found" });
-        }
-
-        const food = new Food({
-          title,
-          price,
-          description,
-          image: foodCloudResult.url,
-          categories: checkCategory.map((cat) => cat._id),
-          restaurant: checkRestaurant._id,
-        });
-
-        const newFood = await food.save();
-
-        if (!newFood) {
-          return res.status(400).json({ message: "Failed to add food" });
-        }
-
-        res
-          .status(201)
-          .json({ message: "Food added successfully", food: newFood });
-      }
+    // Upload image to Cloudinary
+    const foodCloudResult = await cloudinaryInstance.uploader.upload(
+      req.file.path
     );
+
+    const { title, price, description, category, restaurant } = req.body;
+    console.log("req.body", req.body);
+    console.log("rew res", restaurant);
+
+    // const token = req.cookies.token; // Ensure token is passed correctly
+    // let tokenOwnerID;
+
+    // // Check if the token exists
+    // if (!token) {
+    //   return res.status(401).json({ message: "Unauthorized, token missing" });
+    // }
+
+    // // Verify token
+    // jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(403).json({ message: "Invalid token" }); // Corrected to res.status
+    //   }
+    //   tokenOwnerID = result.id;
+    // });
+
+    // Check if the restaurant exists
+
+    const checkRestaurant = await Restaurant.findOne({ _id: restaurant });
+    console.log("checkRestaurant", checkRestaurant);
+    if (!checkRestaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // // Verify owner of the restaurant
+    // const ownerID = checkRestaurant.Owner.toString(); // Convert to string for comparison
+    // console.log("OwnerID", ownerID);
+    // console.log("TokenOwnerID", tokenOwnerID);
+    // if (ownerID !== tokenOwnerID) {
+    //   return res.status(403).json({ message: "Unauthorized user" });
+    // }
+
+    // Check if the categories exist
+    // const categoryNames = category.split(",");
+    // const checkCategory = await Category.find({ name: { $in: categoryNames } });
+    const categoryIds = category;
+    const checkCategory = await Category.find({ _id: { $in: categoryIds } });
+
+    console.log("checkCategory", checkCategory);
+
+    if (!checkCategory) {
+      return res.status(404).json({ message: "categories not found" });
+    }
+
+    // Create and save new food
+    const food = new Food({
+      title,
+      price,
+      description,
+      image: foodCloudResult.url,
+      categories: checkCategory.map((cat) => cat._id),
+      restaurant: checkRestaurant._id,
+    });
+
+    const newFood = await food.save();
+    if (!newFood) {
+      return res.status(400).json({ message: "Failed to add food" });
+    }
+
+    // Send success response
+    res.status(201).json({ message: "Food added successfully", food: newFood });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Error occurred", error: err });
@@ -135,11 +139,12 @@ const updateFood = async (req, res) => {
     res.status(200).json(updateFood);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error updating Best Restaurant", error: error.message });
+    res.status(500).json({
+      message: "Error updating Best Restaurant",
+      error: error.message,
+    });
   }
-
 };
-
 
 //  delete food
 
@@ -172,4 +177,11 @@ const deleteAllFood = async (req, res) => {
   }
 };
 
-export { addFood, getAllFood, getFoodById, updateFood, deleteFood,deleteAllFood };
+export {
+  addFood,
+  getAllFood,
+  getFoodById,
+  updateFood,
+  deleteFood,
+  deleteAllFood,
+};

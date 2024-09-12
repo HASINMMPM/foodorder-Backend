@@ -1,5 +1,6 @@
 import Admin from "../Models/adminModel.js";
 import { Restaurant, VerifyRestaurant } from "../Models/restorantModel.js";
+import Food from "../Models/foodModel.js";
 
 // Add Restaurant
 const addRestaurant = async (req, res) => {
@@ -82,6 +83,8 @@ const deleteRestaurant = async (req, res) => {
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
+    const foods = await Food.deleteMany({restaurant:req.params.id})
+    console.log(`Deleted ${foods.deletedCount} foods`)
     res.status(200).json({ message: "Restaurant deleted successfully", restaurant });
   } catch (error) {
     console.log(error);

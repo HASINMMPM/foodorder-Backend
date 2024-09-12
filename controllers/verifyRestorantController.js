@@ -18,13 +18,13 @@ const addVerifyRestaurant = async (req, res) => {
         }
         console.log("Image uploaded successfully");
 
-        const { title, place, description, type, workingtime, ownerNumber } =
+        const { title, place, description, type, workingtime, ownerId } =
           req.body;
-        const owner = await Admin.findOne({ phoneNumber: ownerNumber });
+        const owner = await Admin.findOne({ _id: ownerId });
         if (!owner) {
           return res
             .status(400)
-            .json({ message: "No admin found with that number" });
+            .json({ message: "No admin found with that Id" });
         }
         const verifyRestaurant = new VerifyRestaurant({
           Title: title,

@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import generateAdminToken from "../utlis/adminToken.js";
 import Admin from "../Models/adminModel.js";
+import { Restaurant } from "../Models/restorantModel.js";
+import Food from "../Models/foodModel.js";
 
 const adminsignup = async (req, res) => {
   console.log("try adminsignup");
@@ -94,7 +96,13 @@ const deleteAdmin = async (req, res) => {
     if (!deleteadmin) {
       return res.status(404).json({ msg: "Failed to delete" });
     }
-    res.json({ msg: "admin deleted successfully" });
+    const restaurant = await Restaurant.findOneAndDelete({ Owner: id });
+    
+    if (!restaurant) {
+      return res.status(404).json({ msg: "No restaurant found for this admin" });
+    }
+   const foods = await Food.deleteMany({restaurant:restaurant})
+    res.json({ msg: "admin deleted successfully and his restaurent and foods" });
   } catch (error) {
     console.log(error);
   }
@@ -104,15 +112,29 @@ const deleteAdmin = async (req, res) => {
 const getAdmin = async (req, res) => {
   try {
     const { id } = req.params;
+    
+  
     const admin = await Admin.findById(id);
     if (!admin) {
-      return res.status(404).json({ msg: "Admin not found" });
+      return res.status(404).json({ msg: "Admin not found with this id" });
     }
-    res.json(admin);
+    
+    // Find restaurant by owner ID (matching with admin ID)
+    const restaurant = await Restaurant.findOne({ Owner: id });
+    
+    if (!restaurant) {
+      return res.status(404).json({ msg: "No restaurant found for this admin" });
+    }
+
+    // Send both admin and restaurant details in the response
+    res.json({ admin, restaurant });
+    
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: "Server error" });
   }
 };
+
 
 // delete all admin
 

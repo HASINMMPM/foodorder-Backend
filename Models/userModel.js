@@ -15,10 +15,10 @@ const userSchema = new mongoose.Schema(
       maxlength: 20,
     },
     phoneNumber: {
-      type: Number,
+      type: String, 
       required: true,
       minlength: 10,
-      maxlength: 10,
+      maxlength: 12, 
     },
     hashPassword: {
       type: String,

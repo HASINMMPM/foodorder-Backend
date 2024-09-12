@@ -38,36 +38,43 @@ const userSignup = async (req, res) => {
     const token = generateAccessToken(user);
     console.log(token);
     res.cookie("token", token);
-    res.send("welcome and enjoy");
+    res.json({ token });
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // login
 
 const userLogin = async (req, res) => {
+  console.log("Login attempt with data:", req.body);
+
   try {
-    console.log("try to login");
     const { phoneNumber, password } = req.body;
 
     const user = await User.findOne({ phoneNumber });
     if (!user) {
+      console.log("User not found");
       return res.status(400).send("User Not found");
     }
 
     const isMatch = await bcrypt.compare(password, user.hashPassword);
     if (!isMatch) {
-      console.log("password matched");
-      return res.status(400).json({ msg: "invalid password" });
+      console.log("Password does not match");
+      return res.status(400).json({ msg: "Invalid password" });
     }
-    console.log(user)
+
     const token = generateAccessToken(user);
-    res.cookie("token", token);
-    res.send(user);
+    res.cookie("token", token, {
+      httpOnly: true, // Prevents client-side access to the cookie
+      secure: false, // Set to true if you are using HTTPS
+      sameSite: "Lax", // Prevents CSRF attacks
+    });
+
+    res.json({ token });
   } catch (error) {
-    console.log(error);
+    console.error("Error during login:", error);
+    res.status(500).send("Server error");
   }
 };
 

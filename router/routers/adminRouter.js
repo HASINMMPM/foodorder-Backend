@@ -11,7 +11,6 @@ adminRouter.post('/adminlogin',adminlog)
 adminRouter.get('/getalladmin', getAdmins)
 adminRouter.delete('/deleteadmin/:id',deleteAdmin)
 adminRouter.delete('/d',deleteAllAdmins)
-adminRouter.post('/singeladmin', getAdmin)
-
+adminRouter.get('/singeladmin/:id', getAdmin)
 
 export  {adminRouter};
