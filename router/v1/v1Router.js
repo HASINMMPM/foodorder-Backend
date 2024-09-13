@@ -11,6 +11,7 @@ import { orderRouter } from "../routers/orderRouter.js";
 import { categoryRouter } from "../routers/categoryRouter.js";
 import { cartRouter } from "../routers/cartRouter.js";
 import { commentRouter } from "../routers/commentrouter.js";
+import { couponRouter } from "../routers/couponRouter.js";
 
 const v1Router = express.Router();
 
@@ -24,5 +25,6 @@ v1Router.use("/v1", orderRouter);
 v1Router.use("/v1/category", categoryRouter);
 v1Router.use("/v1/cart",cartRouter)
 v1Router.use("/v1",commentRouter)
+v1Router.use("/v1/coupon",couponRouter)
 
 export { v1Router };
