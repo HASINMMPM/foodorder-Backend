@@ -1,4 +1,4 @@
-import Coupon from "../Models/CoupenModel.js";
+import Coupon from "../Models/coupenModel.js";
 
 // create coupen
 
