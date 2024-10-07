@@ -20,7 +20,7 @@ const restorantschema = new mongoose.Schema({
   Type: {
     type: String,
     required: false,
-    enum: ["All", "Meat", "Veg"],
+    enum: ["All", "Meat", "Veg","Cake"],
     default: "All",
   },
   WorkingTime: {

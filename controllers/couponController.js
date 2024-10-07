@@ -5,19 +5,26 @@ import Coupon from "../Models/CoupenModel.js";
 const createCoupon = async (req, res) => {
   const { code, discount, expiresAt } = req.body;
 
+
   try {
     // Create a new coupon object
-    const newCoupon = new Coupon({ code, discount, expiresAt });
+    const newCoupon = new Coupon({
+      code,
+      discount,
+      expiresAt: new Date(expiresAt) // Ensure it's a Date object
+    });
 
     // Save the coupon to the database
     await newCoupon.save();
-console.log("created Done")
-    res.status(201).json({ message: "Coupon created successfully" });
+    console.log("Coupon created and will expire at:", expiresAt);
+    
+    res.status(201).json({ message: "Coupon created successfully and will expire at:", expiresAt });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: "Error creating coupon", error });
   }
 };
+
 
 const validateCoupon = async (req, res) => {
   const { code } = req.body;
@@ -42,4 +49,19 @@ const validateCoupon = async (req, res) => {
   }
 };
 
-export { validateCoupon,createCoupon };
+// get all coupen
+
+const getAllCoupons = async (req, res) => {
+  console.log("try to get all coupen")
+  try {
+    const coupons = await Coupon.find({});
+    if(coupons.length === 0){
+      return res.status(404).json({ message: 'No coupons found' }); 
+    }
+    res.json(coupons);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export { validateCoupon,createCoupon,getAllCoupons };

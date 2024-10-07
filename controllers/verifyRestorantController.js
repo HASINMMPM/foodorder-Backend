@@ -20,6 +20,7 @@ const addVerifyRestaurant = async (req, res) => {
 
         const { title, place, description, type, workingtime, ownerId } =
           req.body;
+          console.log("req.body Owner",req.body.ownerId)
         const owner = await Admin.findOne({ _id: ownerId });
         if (!owner) {
           return res
@@ -32,9 +33,10 @@ const addVerifyRestaurant = async (req, res) => {
           Description: description,
           Type: type,
           WorkingTime: workingtime,
-          Owner: owner,
+          Owner: ownerId,
           Image: restoresult.url ,
         });
+        console.log("verifyRestaurant",verifyRestaurant)
 
         const newVerifyRestaurant = await verifyRestaurant.save();
         if (!newVerifyRestaurant) {
