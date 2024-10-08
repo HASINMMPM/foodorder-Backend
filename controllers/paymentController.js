@@ -118,7 +118,7 @@ const deleteOrder = async (req, res) => {
   }
 };
 // All order
-const getOrders = async (req, res) => {
+const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({}).sort({ dateCreated: -1 });
     res.status(200).json(orders);
