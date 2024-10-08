@@ -8,9 +8,9 @@ import Admin from "../Models/adminModel.js";
 const sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    // Check if user is already present
+    
     const checkUserPresent = await Admin.findOne({ email });
-    // If user found with provided email
+    
     if (checkUserPresent) {
       return res.status(401).json({
         success: false,

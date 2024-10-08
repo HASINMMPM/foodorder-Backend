@@ -7,14 +7,13 @@ const createCoupon = async (req, res) => {
 
 
   try {
-    // Create a new coupon object
+  
     const newCoupon = new Coupon({
       code,
       discount,
-      expiresAt: new Date(expiresAt) // Ensure it's a Date object
+      expiresAt: new Date(expiresAt) 
     });
 
-    // Save the coupon to the database
     await newCoupon.save();
     console.log("Coupon created and will expire at:", expiresAt);
     

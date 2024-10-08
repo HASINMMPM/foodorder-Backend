@@ -9,12 +9,11 @@ const addFood = async (req, res) => {
   try {
     console.log("Trying to add a food");
 
-    // Check for the image in the request
+   
     if (!req.file) {
       return res.status(400).json({ message: "No image provided" });
     }
 
-    // Upload image to Cloudinary
     const foodCloudResult = await cloudinaryInstance.uploader.upload(
       req.file.path
     );
@@ -23,42 +22,14 @@ const addFood = async (req, res) => {
     console.log("req.body", req.body);
     console.log("rew res", restaurant);
 
-    // const token = req.cookies.token; // Ensure token is passed correctly
-    // let tokenOwnerID;
-
-    // // Check if the token exists
-    // if (!token) {
-    //   return res.status(401).json({ message: "Unauthorized, token missing" });
-    // }
-
-    // // Verify token
-    // jwt.verify(token, process.env.TOKEN_SECRET, (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //     return res.status(403).json({ message: "Invalid token" }); // Corrected to res.status
-    //   }
-    //   tokenOwnerID = result.id;
-    // });
-
-    // Check if the restaurant exists
-
+    
     const checkRestaurant = await Restaurant.findOne({ _id: restaurant });
     console.log("checkRestaurant", checkRestaurant);
     if (!checkRestaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // // Verify owner of the restaurant
-    // const ownerID = checkRestaurant.Owner.toString(); // Convert to string for comparison
-    // console.log("OwnerID", ownerID);
-    // console.log("TokenOwnerID", tokenOwnerID);
-    // if (ownerID !== tokenOwnerID) {
-    //   return res.status(403).json({ message: "Unauthorized user" });
-    // }
-
-    // Check if the categories exist
-    // const categoryNames = category.split(",");
-    // const checkCategory = await Category.find({ name: { $in: categoryNames } });
+  
     const categoryIds = category;
     const checkCategory = await Category.find({ _id: { $in: categoryIds } });
 
@@ -68,7 +39,6 @@ const addFood = async (req, res) => {
       return res.status(404).json({ message: "categories not found" });
     }
 
-    // Create and save new food
     const food = new Food({
       title,
       price,

@@ -8,16 +8,21 @@ const superAdminsignup = async (req, res) => {
     const { name, email, password } = req.body;
     console.log(email);
 
-    // Check the number of Super Admins in the database
-    const superAdminCount = await SuperAdmin.countDocuments({ role: "Super admin" });
+    const superAdminCount = await SuperAdmin.countDocuments({
+      role: "Super admin",
+    });
 
     if (superAdminCount >= 2) {
-      return res.status(400).json({ msg: "Cannot add more than 2 Super Admins" });
+      return res
+        .status(400)
+        .json({ msg: "Cannot add more than 2 Super Admins" });
     }
 
     const superAdminexist = await SuperAdmin.findOne({ email });
     if (superAdminexist) {
-      return res.status(400).json({ msg: "Super Admin already exists with this email" });
+      return res
+        .status(400)
+        .json({ msg: "Super Admin already exists with this email" });
     }
 
     const saltRounds = 10;
@@ -40,21 +45,18 @@ const superAdminsignup = async (req, res) => {
     const admin = newSuperAdminCreation;
     const token = generateAdminToken(admin);
     console.log(token);
-    
+
     res.cookie("token", token);
     res.json({
       message: "Super Admin created and you can control it",
       token: token,
-      admin: admin
-  });
-  
-
+      admin: admin,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
-
 
 // login
 
@@ -74,7 +76,7 @@ const superAdminlog = async (req, res) => {
 
     const token = generateAdminToken(admin);
     res.cookie("token", token);
-    res.json({token})
+    res.json({ token });
     res.send("super Admin logined you can controll it");
   } catch (error) {
     console.log(error);
@@ -91,5 +93,5 @@ const deleteAllasm = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-}
-export { superAdminsignup, superAdminlog,deleteAllasm };
+};
+export { superAdminsignup, superAdminlog, deleteAllasm };

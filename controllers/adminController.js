@@ -43,7 +43,7 @@ const adminsignup = async (req, res) => {
 
     const token = generateAdminToken(newAdminCreation);
     console.log(token);
-    res.cookie("token", token, { httpOnly: true }); // Set httpOnly flag
+    res.cookie("token", token, { httpOnly: true }); 
     res.json({ token });
   } catch (error) {
     console.log(error);
