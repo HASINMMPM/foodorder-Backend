@@ -30,7 +30,7 @@ const adminschema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const Admin = mongoose.model("Admin", adminschema);
+const Admin = mongoose.model("Owner", adminschema);
 export default Admin;
 
 
