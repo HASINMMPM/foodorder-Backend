@@ -54,6 +54,7 @@ const adminsignup = async (req, res) => {
 // login
 
 const adminlog = async (req, res) => {
+  console.log("try to admin login")
   try {
     console.log("try to admin login");
     const { email, password } = req.body;

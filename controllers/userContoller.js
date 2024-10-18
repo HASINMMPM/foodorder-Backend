@@ -5,9 +5,9 @@ import generateAccessToken from "../utlis/userToken.js";
 import twilio from "twilio";
 
 const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-console.log("Twilio Account SID:", process.env.TWILIO_ACCOUNT_SID);
-console.log("Twilio Auth Token:", process.env.TWILIO_AUTH_TOKEN);
-console.log("VERIFY_SERVICE_SID:", serviceSid);
+// console.log("Twilio Account SID:", process.env.TWILIO_ACCOUNT_SID);
+// console.log("Twilio Auth Token:", process.env.TWILIO_AUTH_TOKEN);
+// console.log("VERIFY_SERVICE_SID:", serviceSid);
 
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
