@@ -63,7 +63,7 @@ const verifyOtp = async (req, res) => {
     const saltRounds = 10;
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create new user in the database
+ 
     const newUser = new User({
       firstName,
       lastName,
@@ -73,7 +73,6 @@ const verifyOtp = async (req, res) => {
 
     const user = await newUser.save();
 
-    // Generate token
     const token = generateAccessToken(user);
 
     res.json({ msg: "Signup successful", token });
@@ -103,9 +102,9 @@ const userLogin = async (req, res) => {
 
     const token = generateAccessToken(user);
     res.cookie("token", token, {
-      httpOnly: true, // Prevents client-side access to the cookie
-      secure: false, // Set to true if you are using HTTPS
-      sameSite: "Lax", // Prevents CSRF attacks
+      httpOnly: true, 
+      secure: false,
+      sameSite: "Lax", 
     });
 
     res.json({ token });
