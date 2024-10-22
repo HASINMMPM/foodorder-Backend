@@ -21,12 +21,14 @@ const orderSetup = async (req, res) => {
       zip: req.body.zip,
       payment: false, 
     });
+    console.log("newOrder",newOrder)
 
    
     const savedOrder = await newOrder.save();
 
   
     const totalAmount = req.body.totalAmount * 100; 
+    console.log("totalAmount",totalAmount)
     const options = {
       amount: totalAmount,
       currency: "INR",
@@ -156,4 +158,29 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { orderSetup, verifyPayment, deleteOrder, getAllOrders, updateStatus };
+const removeSingleItem =async (req, res) => {
+  const { orderId } = req.body;
+  const { itemId } = req.body;
+  console.log("itemId",itemId)
+  console.log("orderId",orderId)
+
+  try {
+    // Find the order by ID and update it by pulling the item from the items array
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { $pull: { items: { _id: itemId } } }, // Remove the item from the array
+      { new: true }
+    );
+    console.log(updatedOrder)
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json({ message: 'Item removed successfully', order: updatedOrder });
+  } catch (error) {
+    res.status(500).json({ message: 'Error removing item', error });
+  }
+};
+
+export { orderSetup, verifyPayment, deleteOrder, getAllOrders, updateStatus,removeSingleItem };
